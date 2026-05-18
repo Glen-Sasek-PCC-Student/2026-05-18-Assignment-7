@@ -34,6 +34,7 @@
 // ------------- CODE -------------
 #include <iostream>
 #include <limits>
+#include <iomanip>
 
 using namespace std;
 
@@ -66,6 +67,8 @@ char calcLetterGrade(double decimalGrade);
 
 double getScoreInRange(string prompt);
 
+void displayGrade(double decimalGrade, char letterGrade);
+
 // Main function
 // https://en.cppreference.com/w/cpp/language/main_function.html
 int main() {
@@ -88,9 +91,13 @@ int main() {
   }
    
   assignAvg = assignAverage(numberOfAssignments);
+  midtermExam = getScoreInRange("Enter your midterm exam score: ");
+  finalExam = getScoreInRange("Enter your final exam score: ");
 
   double decimalGrade = calcDecimalGrade(assignAvg, midtermExam, finalExam);
   char letterGrade = calcLetterGrade(decimalGrade);
+
+  displayGrade(decimalGrade, letterGrade);
 
   goodbyeMessage();
   return 0;
@@ -104,6 +111,7 @@ double calcDecimalGrade(double assignAvg, double midtermExam, double finalExam) 
   decimalGrade += assignAvg * ASSIGNMENT_WEIGHT;
   decimalGrade += midtermExam * EXAM_WEIGHT;
   decimalGrade += finalExam * EXAM_WEIGHT;
+  return decimalGrade;
 }
 
 char calcLetterGrade(double decimalGrade) {
@@ -197,6 +205,12 @@ double assignAverage(int numAssigns) {
 
   avg = sum / numAssigns;
   return avg;
+}
+
+void displayGrade(double decimalGrade, char letterGrade) {
+  cout << fixed << setprecision(1);
+  cout << "Your Final Numeric score is " << decimalGrade << endl;
+  cout << "Your Final Grade is " << letterGrade << endl;
 }
 // ------------- DESIGN -------------
 /* 

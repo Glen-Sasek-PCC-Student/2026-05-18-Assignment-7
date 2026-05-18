@@ -33,18 +33,28 @@
 
 // ------------- CODE -------------
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
 const double ASSIGNMENT_WEIGHT = 0.60;
 const double EXAM_WEIGHT = 0.20;
 
+const int MIN_ASSIGNMENT_COUNT = 0;
+const int MAX_ASSIGNMENT_COUNT = 10;
+
+const double MIN_SCORE = 0.0;
+const double MAX_SCORE = 4.0;
+
+const string PROMPT_NUM_ASSIGNMENTS = "Enter the number of assignments (0 to 10): ";
+
 // Function prototypes (if any)
 void helloMessage();
+void usageMessage();
 void goodbyeMessage();
 
 int readInt(string prompt); 
-double readScore(string prompt); 
+double readDouble(string prompt); 
 
 double assignAverage(int numAssigns); 
 
@@ -54,10 +64,35 @@ double calcDecimalGrade(double assignAvg, double midtermExam, double finalExam);
 
 char calcLetterGrade(double decimalGrade); 
 
+double getScoreInRange(string prompt);
+
 // Main function
 // https://en.cppreference.com/w/cpp/language/main_function.html
-int main(int argc, char* argv[]) {
-  cout << "Hello, World!" << endl;
+int main() {
+  helloMessage();
+  usageMessage();
+
+  double assignAvg = 0.0;
+  double midtermExam = 0.0;
+  double finalExam = 0.0;
+
+  int numberOfAssignments = 0;
+  bool next = true;
+  while(next) {
+    numberOfAssignments = readInt(PROMPT_NUM_ASSIGNMENTS);
+    if(MIN_ASSIGNMENT_COUNT <= numberOfAssignments 
+       and 
+       numberOfAssignments <= MAX_ASSIGNMENT_COUNT) {
+      next = false;
+    } 
+  }
+   
+  assignAvg = assignAverage(numberOfAssignments);
+
+  double decimalGrade = calcDecimalGrade(assignAvg, midtermExam, finalExam);
+  char letterGrade = calcLetterGrade(decimalGrade);
+
+  goodbyeMessage();
   return 0;
 }
 
@@ -71,8 +106,98 @@ double calcDecimalGrade(double assignAvg, double midtermExam, double finalExam) 
   decimalGrade += finalExam * EXAM_WEIGHT;
 }
 
+char calcLetterGrade(double decimalGrade) {
+  char grade = '\0';
 
+  if(decimalGrade >= 3.3) {
+    grade = 'A';
+  } else if(decimalGrade >= 2.8) {
+    grade = 'B';
+  } else if(decimalGrade >= 2.0) {
+    grade = 'C';
+  } else if(decimalGrade >= 1.2) {
+    grade = 'D';
+  } else {
+    grade = 'F';
+  }
+  return grade;
+}
 
+int readInt(string prompt) {
+    int n = 0;
+    bool next = true;
+    
+    while (next) {
+        cout << prompt;
+        cin >> n;
+        if (cin && n >= 0) {
+            next = false;
+        } else {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+    return n;
+}
+
+double readDouble(string prompt) {
+    double n = 0.0;
+    bool next = true;
+    
+    while (next) {
+        cout << prompt;
+        cin >> n;
+        if (cin) {
+            next = false;
+        } else {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+    return n;
+}
+
+void helloMessage() {
+  cout << "Welcome to my Final Grade Calculator!" << endl;
+}
+
+void usageMessage() {
+  cout << "Please enter the following information and I will calculate your Final Numerical Grade and Letter Grade for you!" << endl;
+  cout << "The number of assignments must be between 0 and 10." << endl;
+  cout << "All scores entered must be between 0 and 4. " << endl;
+}
+
+void goodbyeMessage() {
+  cout << "Thank you for using my Grade Calculator!" << endl;
+}
+
+double getScoreInRange(string prompt) {
+    double score = 0.0;
+    bool next = true;
+    while(next) {
+      score = readDouble(prompt);
+      if(MIN_SCORE <= score and score <= MAX_SCORE) {
+        next = false;
+      } else {
+        cout << "All scores entered must be between 0 and 4. ";
+      }
+    }
+    return score;
+}
+
+double assignAverage(int numAssigns) {
+  double sum = 0.0;
+  double avg = 0.0;
+
+  for(int i = 1; i <= numAssigns; i++) {
+    string promptScore = "Enter score " + to_string(i) + ": ";
+    double score = getScoreInRange(promptScore);
+    sum = sum + score;
+  }
+
+  avg = sum / numAssigns;
+  return avg;
+}
 // ------------- DESIGN -------------
 /* 
 Program Name:
@@ -134,7 +259,7 @@ CALCULATE CHARACTER GRADE
 Your Final Numeric score is 3.4
 Your Final Grade is A
 
-MESSAGE "Thank you for using my Grade Calculator!""
+MESSAGE "Thank you for using my Grade Calculator!"
 
 
 SAMPLE RUNS
